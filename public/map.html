@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EcoLens — recycling map</title>
+    <style>
+      html,
+      body,
+      #map {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background: #eef2f0;
+        font-family: -apple-system, system-ui, sans-serif;
+      }
+      .iw {
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .iw a {
+        display: inline-block;
+        outline: none;
+        margin-top: 6px;
+        color: #17915f;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="config.js"></script>
+    <script>
+      // Embedded by the app as map.html?lat=..&lon=..&lang=en|az. Fetches the
+      // Maps key from the API, then reports status back to the parent window.
+      const params = new URLSearchParams(location.search);
+      const lat = parseFloat(params.get("lat"));
+      const lon = parseFloat(params.get("lon"));
+      const lang = params.get("lang") === "az" ? "az" : "en";
+      const T = {
+        en: { you: "You are here", bin: "Recycling point", dir: "Directions →" },
+        az: { you: "Sən buradasan", bin: "Təkrar emal məntəqəsi", dir: "İstiqamət →" },
+      }[lang];
+
+      const IS_APPLE = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const post = (msg) => {
+        try {
+          parent.postMessage(Object.assign({ type: "ecolens-map" }, msg), "*");
+        } catch (e) {}
+      };
+      const esc = (s) =>
+        String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+      // Real recycling points from OpenStreetMap, within ~5km. Our API answers
+      // from its own snapshot for Azerbaijan (fast, and independent of the
+      // often-overloaded public servers); if that fails, ask Overpass directly.
+      async function fetchBins() {
+        try {
+          const r = await fetch(`${window.ECOLENS.apiBase}/bins?lat=${lat}&lon=${lon}`, {
+            signal: AbortSignal.timeout(15000),
+          });
+          if (r.ok) return (await r.json()).bins || [];
+        } catch (e) {}
+        const q = `[out:json][timeout:25];(node["amenity"="recycling"](around:5000,${lat},${lon});node["amenity"="waste_disposal"](around:5000,${lat},${lon}););out body 100;`;
+        const r = await fetch("https://overpass-api.de/api/interpreter", {
+          method: "POST",
+          body: "data=" + encodeURIComponent(q),
+          signal: AbortSignal.timeout(20000),
+        });
+        if (!r.ok) throw new Error("bins unavailable");
+        return ((await r.json()).elements || []).filter((e) => e.lat && e.lon);
+      }
+
+      function binLabel(b) {
+        const tg = b.tags || {};
+        const materials = Object.keys(tg)
+          .filter((k) => k.startsWith("recycling:") && tg[k] === "yes")
+          .map((k) => k.replace("recycling:", ""))
+          .join(", ");
+        const base = tg.name || tg.operator || T.bin;
+        return materials ? `${esc(base)} — ${esc(materials)}` : esc(base);
+      }
+
+      // Google calls this if the key/referrer is rejected; once it has, never
+      // report bins as "found" over the top of Google's error screen.
+      let mapFailed = false;
+      window.gm_authFailure = () => {
+        mapFailed = true;
+        post({ status: "error" });
+      };
+
+      window.initMap = async function () {
+        if (!isFinite(lat) || !isFinite(lon)) return post({ status: "error" });
+        const center = { lat, lng: lon };
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center,
+          zoom: 14,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          clickableIcons: false,
+        });
+        new google.maps.Marker({
+          position: center,
+          map,
+          title: T.you,
+          zIndex: 999,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 9,
+            fillColor: "#17915f",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 3,
+          },
+        });
+        try {
+          const bins = await fetchBins();
+          const bounds = new google.maps.LatLngBounds();
+          bounds.extend(center);
+          const iw = new google.maps.InfoWindow();
+          bins.forEach((b) => {
+            const m = new google.maps.Marker({
+              position: { lat: b.lat, lng: b.lon },
+              map,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 7,
+                fillColor: "#378add",
+                fillOpacity: 0.95,
+                strokeColor: "#0c447c",
+                strokeWeight: 2,
+              },
+            });
+            // iPhone/iPad: Apple Maps opens the Maps app directly; elsewhere, Google Maps.
+            const dirUrl = IS_APPLE
+              ? `https://maps.apple.com/?daddr=${b.lat},${b.lon}&dirflg=w`
+              : `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lon}&travelmode=walking`;
+            m.addListener("click", () => {
+              iw.setContent(
+                `<div class="iw"><b>${binLabel(b)}</b><br><a href="${dirUrl}" target="_blank" rel="noopener">${T.dir}</a></div>`
+              );
+              iw.open(map, m);
+            });
+            bounds.extend({ lat: b.lat, lng: b.lon });
+          });
+          if (bins.length) map.fitBounds(bounds, 40);
+          if (mapFailed) return;
+          post({ status: bins.length ? "found" : "none", count: bins.length });
+        } catch (e) {
+          // OpenStreetMap servers unreachable — not the same as "nothing nearby".
+          if (!mapFailed) post({ status: "binsfail" });
+        }
+      };
+
+      // The key is protected by its website restriction, not by secrecy; fetching
+      // it at runtime just keeps it out of the public repo.
+      (async () => {
+        let key = "";
+        try {
+          const r = await fetch(window.ECOLENS.apiBase + "/maps-key");
+          if (r.ok) key = (await r.json()).key;
+        } catch (e) {}
+        if (!key) return post({ status: "nokey" });
+        const s = document.createElement("script");
+        s.async = true;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap&loading=async`;
+        s.onerror = () => post({ status: "error" });
+        document.head.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>

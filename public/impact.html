@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f3d2e" />
+    <title>EcoLens Impact</title>
+    <meta
+      name="description"
+      content="Live, anonymous numbers from EcoLens, the AI waste-sorting assistant for Azerbaijan: items sorted, recycling rate and measured AI accuracy."
+    />
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .back-link {
+        color: #cfe3d8;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .back-link:hover {
+        color: #fff;
+      }
+      .lead {
+        font-size: 14.5px;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .stat {
+        background: var(--card);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 16px 16px 14px;
+        animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+      .stat-num {
+        font-family: "Sora", sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.8px;
+        color: var(--green-deep);
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-label {
+        margin-top: 4px;
+        font-size: 12.5px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+      .section-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 14px;
+        line-height: 1.45;
+      }
+      .big-acc {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .big-acc .stat-num {
+        font-size: 40px;
+      }
+      .hbar {
+        display: grid;
+        grid-template-columns: 112px 1fr 44px;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .hbar-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .hbar-track {
+        display: block;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .hbar-fill {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: var(--green);
+      }
+      .hbar-val {
+        text-align: right;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .months {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        height: 150px;
+        padding-top: 18px;
+      }
+      .month {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+        min-width: 0;
+      }
+      .month-bar {
+        width: 100%;
+        max-width: 44px;
+        border-radius: 8px 8px 3px 3px;
+        background: linear-gradient(180deg, var(--green), #0f7a4d);
+        min-height: 3px;
+      }
+      .month-bar.zero {
+        background: var(--line);
+      }
+      .month-n {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        font-variant-numeric: tabular-nums;
+      }
+      .month-label {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 6px;
+        white-space: nowrap;
+      }
+      .method {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13.5px;
+        line-height: 1.55;
+      }
+      .method li + li {
+        margin-top: 6px;
+      }
+      .empty-note {
+        margin: 0;
+        padding: 11px 14px;
+        border-radius: 12px;
+        background: var(--amber-soft);
+        color: var(--amber);
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .cta {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 4px;
+      }
+      .in-app #backLink, .in-app #ctaLink { display: none !important; }
+    </style>
+    <script>
+      // Opened from the iOS app (in its browser sheet): hide links back to the website.
+      if (new URLSearchParams(location.search).has("app")) document.documentElement.classList.add("in-app");
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="leaf" aria-hidden="true">🌿</span>
+          <div>
+            <h1>EcoLens</h1>
+            <a class="back-link" id="backLink" href="./" data-i18n="back">← Open the app</a>
+          </div>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button data-lang="en" class="active">EN</button>
+          <button data-lang="az">AZ</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="card">
+          <h2 data-i18n="title">Impact</h2>
+          <p class="lead muted" id="lead" data-i18n="lead">
+            Live, anonymous numbers from real people using EcoLens in Azerbaijan.
+          </p>
+        </section>
+
+        <div id="loading" class="card boot">
+          <div class="spinner"></div>
+          <p class="muted" data-i18n="loading">Loading…</p>
+        </div>
+        <div id="failed" class="card hidden">
+          <p class="muted" data-i18n="failed">Couldn't load the numbers. Please try again later.</p>
+        </div>
+
+        <div id="content" class="hidden" style="display: flex; flex-direction: column; gap: 16px">
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-num" id="sScans">–</div><div class="stat-label" data-i18n="s_scans">items sorted</div></div>
+            <div class="stat"><div class="stat-num" id="sUsers">–</div><div class="stat-label" data-i18n="s_users">people using it</div></div>
+            <div class="stat"><div class="stat-num" id="sRecycle">–</div><div class="stat-label" id="sRecycleLabel">sent to recycling</div></div>
+            <div class="stat"><div class="stat-num" id="sHaz">–</div><div class="stat-label" data-i18n="s_haz">hazardous & e-waste items kept out of the normal bin</div></div>
+          </div>
+
+          <section class="card">
+            <h2 data-i18n="acc_title">Is the AI right?</h2>
+            <p class="section-sub" data-i18n="acc_sub">
+              After every result, people answer “Was this right?”. That's how EcoLens measures its real-world accuracy.
+            </p>
+            <div id="accBody"></div>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="cat_title">What people scan</h2>
+            <p class="section-sub" data-i18n="cat_sub">Share of all items, by the category the AI chose.</p>
+            <div id="cats"></div>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="month_title">Scans per month</h2>
+            <div class="months" id="months"></div>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="how_title">How it works</h2>
+            <ul class="method">
+              <li id="howModel"></li>
+              <li data-i18n="how_2">The answer is structured data (category, bin, prep steps, harm) in English and Azerbaijani, tuned for Azerbaijan's still-developing collection system.</li>
+              <li data-i18n="how_3">Numbers exclude demo and test accounts. Accuracy is what users report; it isn't an expert audit.</li>
+              <li data-i18n="how_4">Photos aren't stored. Only the item name, category and the user's rating are saved.</li>
+            </ul>
+          </section>
+
+          <a class="btn primary cta" id="ctaLink" href="./" data-i18n="cta">Try EcoLens</a>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span id="since"></span>
+        <a href="privacy.html" data-i18n="privacy">Privacy policy</a>
+        <div style="margin-top: 6px; color: #a9c9ba; font-weight: 500" data-i18n="credit">Created by Maksud Yusuf · Baku, Azerbaijan</div>
+      </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+      const I18N = {
+        en: {
+          back: "← Open the app",
+          title: "Impact",
+          lead: "Live, anonymous numbers from real people using EcoLens in Azerbaijan.",
+          loading: "Loading…",
+          failed: "Couldn't load the numbers. Please try again later.",
+          s_scans: "items sorted",
+          s_users: "people using it",
+          s_recycle: "sent to recycling ({n} items)",
+          s_haz: "hazardous & e-waste items kept out of the normal bin",
+          acc_title: "Is the AI right?",
+          acc_sub: "After every result, people answer “Was this right?”. That's how EcoLens measures its real-world accuracy.",
+          acc_label: "correct · rated results: {n}",
+          acc_none: "No ratings yet. Use the app and tap 👍 or 👎 under a result to help measure accuracy.",
+          acc_few: "Early estimate — ratings so far: {n}.",
+          band_high: "AI ≥ 90% sure",
+          band_medium: "AI 70–89% sure",
+          band_low: "AI < 70% sure",
+          cal_sub: "Accuracy by how confident the AI said it was:",
+          cat_title: "What people scan",
+          cat_sub: "Share of all items, by the category the AI chose.",
+          month_title: "Scans per month",
+          how_title: "How it works",
+          how_1: "A photo is sent to Google's {model} with a prompt about Azerbaijan's recycling options.",
+          how_2: "The answer is structured data (category, bin, prep steps, harm) in English and Azerbaijani, tuned for Azerbaijan's still-developing collection system.",
+          how_3: "Numbers exclude demo and test accounts. Accuracy is what users report; it isn't an expert audit.",
+          how_4: "Photos aren't stored. Only the item name, category and the user's rating are saved.",
+          cta: "Try EcoLens",
+          since: "Since {date} ·",
+          privacy: "Privacy policy",
+          credit: "Created by Maksud Yusuf · Baku, Azerbaijan",
+        },
+        az: {
+          back: "← Tətbiqi aç",
+          title: "Təsir",
+          lead: "Azərbaycanda EcoLens-dən istifadə edən real insanlardan canlı, anonim rəqəmlər.",
+          loading: "Yüklənir…",
+          failed: "Rəqəmlər yüklənmədi. Zəhmət olmasa sonra yenidən cəhd et.",
+          s_scans: "əşya ayrılıb",
+          s_users: "istifadəçi",
+          s_recycle: "təkrar emala göndərilib ({n} əşya)",
+          s_haz: "təhlükəli və elektron tullantı adi qutudan uzaq tutulub",
+          acc_title: "Süni intellekt düz deyirmi?",
+          acc_sub: "Hər nəticədən sonra insanlar “Bu düzgündür?” sualına cavab verir. EcoLens real dəqiqliyini belə ölçür.",
+          acc_label: "düzgün, {n} qiymətləndirilmiş nəticədən",
+          acc_none: "Hələ qiymət yoxdur. Tətbiqdə nəticənin altındakı 👍 və ya 👎 düyməsinə toxunaraq dəqiqliyi ölçməyə kömək et.",
+          acc_few: "İlkin təxmin: hələlik cəmi {n} qiymət var.",
+          band_high: "Sİ ≥ 90% əmin",
+          band_medium: "Sİ 70–89% əmin",
+          band_low: "Sİ < 70% əmin",
+          cal_sub: "Sİ-nin özünün dediyi əminliyə görə dəqiqlik:",
+          cat_title: "İnsanlar nə tarayır",
+          cat_sub: "Bütün əşyaların payı, Sİ-nin seçdiyi kateqoriyaya görə.",
+          month_title: "Aylıq taramalar",
+          how_title: "Necə işləyir",
+          how_1: "Şəkil Azərbaycanın təkrar emal imkanları haqqında təlimatla birlikdə Google-un {model} modelinə göndərilir.",
+          how_2: "Cavab ingilis və Azərbaycan dillərində strukturlaşdırılmış məlumatdır (kateqoriya, qutu, hazırlıq, zərər) və Azərbaycanın inkişaf edən toplama sisteminə uyğunlaşdırılıb.",
+          how_3: "Rəqəmlərə demo və test hesabları daxil deyil. Dəqiqlik istifadəçilərin bildirdiyidir, ekspert auditi deyil.",
+          how_4: "Şəkillər saxlanmır. Yalnız əşyanın adı, kateqoriyası və istifadəçinin qiyməti saxlanılır.",
+          cta: "EcoLens-i sına",
+          since: "{date} tarixindən ·",
+          privacy: "Məxfilik siyasəti",
+          credit: "Müəllif: Maksud Yusuf · Bakı, Azərbaycan",
+        },
+      };
+      const CATS = {
+        plastic: { emoji: "🧴", color: "#d9b92b", en: "Plastic", az: "Plastik" },
+        paper: { emoji: "📄", color: "#4a9df0", en: "Paper & card", az: "Kağız və karton" },
+        glass: { emoji: "🍶", color: "#3fbf9c", en: "Glass", az: "Şüşə" },
+        metal: { emoji: "🥫", color: "#8794a1", en: "Metal", az: "Metal" },
+        organic: { emoji: "🍎", color: "#7bbf3f", en: "Organic", az: "Üzvi" },
+        "e-waste": { emoji: "🔌", color: "#b06bd6", en: "E-waste", az: "Elektron" },
+        hazardous: { emoji: "☣️", color: "#e0774a", en: "Hazardous", az: "Təhlükəli" },
+        textile: { emoji: "👕", color: "#d66b9e", en: "Textile", az: "Tekstil" },
+        "general-waste": { emoji: "🗑️", color: "#8a9a91", en: "General waste", az: "Ümumi tullantı" },
+      };
+
+      const params = new URLSearchParams(location.search);
+      let lang = params.get("lang") === "az" ? "az" : "en";
+      let stats = null;
+      const $ = (id) => document.getElementById(id);
+      const t = (k, vars = {}) =>
+        Object.entries(vars).reduce((s, [k2, v]) => s.replace(`{${k2}}`, v), I18N[lang][k] || k);
+      const esc = (s) =>
+        String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      const nf = () => new Intl.NumberFormat(lang === "az" ? "az" : "en");
+      const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
+      // Many browsers ship no Azerbaijani date names, so spell them out.
+      const AZ_MONTHS = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avqust", "sentyabr", "oktyabr", "noyabr", "dekabr"];
+      const monthShort = (d) =>
+        lang === "az"
+          ? ["yan", "fev", "mar", "apr", "may", "iyn", "iyl", "avq", "sen", "okt", "noy", "dek"][d.getUTCMonth()]
+          : d.toLocaleDateString("en", { month: "short", timeZone: "UTC" });
+      const fullDate = (d) =>
+        lang === "az"
+          ? `${d.getDate()} ${AZ_MONTHS[d.getMonth()]} ${d.getFullYear()}`
+          : d.toLocaleDateString("en", { year: "numeric", month: "long", day: "numeric" });
+
+      function applyLang() {
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          el.textContent = t(el.dataset.i18n);
+        });
+        document.querySelectorAll(".lang-toggle button").forEach((b) =>
+          b.classList.toggle("active", b.dataset.lang === lang)
+        );
+        $("backLink").href = $("ctaLink").href = lang === "az" ? "./?lang=az" : "./";
+        if (stats) render();
+      }
+      document.querySelectorAll(".lang-toggle button").forEach((b) =>
+        b.addEventListener("click", () => {
+          lang = b.dataset.lang;
+          applyLang();
+        })
+      );
+
+      function hbar(label, value, total, color, valText) {
+        const w = total ? Math.max(2, (value / total) * 100) : 0;
+        return `<div class="hbar">
+          <span class="hbar-label">${label}</span>
+          <span class="hbar-track"><span class="hbar-fill" style="width:${w}%;background:${color}"></span></span>
+          <span class="hbar-val">${valText}</span>
+        </div>`;
+      }
+
+      function render() {
+        const s = stats;
+        const n = nf();
+        $("sScans").textContent = n.format(s.scans);
+        $("sUsers").textContent = n.format(s.users);
+        $("sRecycle").textContent = pct(s.recyclable, s.scans) + "%";
+        $("sRecycleLabel").textContent = t("s_recycle", { n: n.format(s.recyclable) });
+        $("sHaz").textContent = n.format(s.hazardous);
+
+        // Accuracy from user feedback, plus calibration by confidence band.
+        const rated = s.feedback.correct + s.feedback.wrong;
+        let acc = "";
+        if (!rated) {
+          acc = `<p class="empty-note">${t("acc_none")}</p>`;
+        } else {
+          acc = `<div class="big-acc"><span class="stat-num">${pct(s.feedback.correct, rated)}%</span>
+            <span class="muted">${t("acc_label", { n: n.format(rated) })}</span></div>`;
+          if (rated < 30) acc += `<p class="empty-note">${t("acc_few", { n: rated })}</p>`;
+          if (s.calibration.length) {
+            const order = { high: 0, medium: 1, low: 2 };
+            acc += `<p class="section-sub" style="margin-top:14px">${t("cal_sub")}</p>`;
+            acc += [...s.calibration]
+              .sort((a, b) => order[a.band] - order[b.band])
+              .map((c) =>
+                hbar(t("band_" + c.band), c.correct, c.rated, "var(--green)", `${pct(c.correct, c.rated)}%`)
+              )
+              .join("");
+          }
+        }
+        $("accBody").innerHTML = acc;
+
+        // Categories, biggest first.
+        const cats = Object.entries(s.categories).sort((a, b) => b[1] - a[1]);
+        $("cats").innerHTML = cats
+          .map(([k, v]) => {
+            const m = CATS[k] || CATS["general-waste"];
+            return hbar(`${m.emoji} ${esc(m[lang])}`, v, s.scans, m.color, `${pct(v, s.scans)}%`);
+          })
+          .join("");
+
+        // Monthly activity (CSS bars).
+        const max = Math.max(1, ...s.monthly.map((m) => m.n));
+        $("months").innerHTML = s.monthly
+          .map((m) => {
+            const [y, mo] = m.month.split("-").map(Number);
+            const label = monthShort(new Date(Date.UTC(y, mo - 1, 1)));
+            const h = m.n ? Math.max(4, (m.n / max) * 100) : 2;
+            return `<div class="month">
+              <span class="month-n">${m.n}</span>
+              <span class="month-bar ${m.n ? "" : "zero"}" style="height:${h}%"></span>
+              <span class="month-label">${esc(label)}</span>
+            </div>`;
+          })
+          .join("");
+
+        $("howModel").textContent = t("how_1", { model: modelName(s.model) });
+        $("since").textContent = s.since
+          ? t("since", { date: fullDate(new Date(s.since)) })
+          : "";
+      }
+
+      // "gemini-3.6-flash" → "Gemini 3.6 Flash"
+      function modelName(id) {
+        return String(id || "Gemini")
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+      }
+
+      async function load() {
+        try {
+          const r = await fetch(window.ECOLENS.apiBase + "/stats");
+          if (!r.ok) throw new Error("stats " + r.status);
+          stats = await r.json();
+          render();
+          $("loading").classList.add("hidden");
+          $("content").classList.remove("hidden");
+        } catch (e) {
+          $("loading").classList.add("hidden");
+          $("failed").classList.remove("hidden");
+        }
+      }
+
+      applyLang();
+      load();
+    </script>
+  </body>
+</html>

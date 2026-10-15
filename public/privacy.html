@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>EcoLens — Privacy Policy</title>
+    <style>
+      :root {
+        --ink: #12261d;
+        --muted: #5d6f66;
+        --green: #17915f;
+        --line: #e4ece7;
+      }
+      body {
+        margin: 0;
+        background: #f6f9f7;
+        color: var(--ink);
+        font-family: -apple-system, system-ui, "Inter", sans-serif;
+        line-height: 1.6;
+      }
+      /* Dark bar under the status bar, matching the app (status bar text is white). */
+      .bar {
+        background: #0f3d2e;
+        padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
+      }
+      .bar a {
+        display: block;
+        max-width: 680px;
+        margin: 0 auto;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      main {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 24px 20px 48px;
+      }
+      h1 {
+        font-size: 26px;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 28px 0 6px;
+      }
+      p,
+      li {
+        font-size: 15px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      a {
+        color: var(--green);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 32px 0;
+      }
+      .in-app .bar { display: none; }
+    </style>
+    <script>
+      // Opened from the iOS app (in its browser sheet): hide links back to the website.
+      if (new URLSearchParams(location.search).has("app")) document.documentElement.classList.add("in-app");
+    </script>
+  </head>
+  <body>
+    <header class="bar"><a href="index.html">← EcoLens</a></header>
+    <main>
+      <h1>Privacy Policy</h1>
+      <p class="muted">Effective 13 October 2026</p>
+
+      <p>
+        EcoLens helps you sort waste correctly in Azerbaijan. This policy explains what data the app
+        uses, why, and the choices you have. We collect as little as possible.
+      </p>
+
+      <h2>What we collect</h2>
+      <ul>
+        <li><b>Account details</b> — your email address and a password (stored securely by our
+          authentication provider; we never see your password).</li>
+        <li><b>Scan history</b> — for each scan we save the item's name, its waste category, whether
+          it's recyclable, and the time. This powers your History and your daily scan limit.</li>
+        <li><b>Your ratings</b> — if you answer "Was this right?" under a result, we save your answer
+          and, if you type one, what the item really was. We use this to measure and improve
+          accuracy. Only anonymous totals are ever shown publicly.</li>
+      </ul>
+
+      <h2>What we don't keep</h2>
+      <ul>
+        <li><b>Photos</b> — the photo you take is sent to our AI provider, Google Gemini, only to
+          identify the item (the app asks for your permission before the first photo is sent),
+          then discarded. We do not store your photos.</li>
+        <li><b>Location</b> — when you open the recycling map, your device's location is used only to
+          center the map and find nearby recycling points. It is not saved to your account.</li>
+      </ul>
+
+      <h2>Services we use</h2>
+      <ul>
+        <li><b>Supabase</b> — account sign-in and the database for your scan history.</li>
+        <li><b>Google Gemini</b> — AI that identifies the item in your photo.</li>
+        <li><b>Google Maps</b> and <b>OpenStreetMap</b> — showing the map and nearby recycling
+          points.</li>
+        <li><b>Brevo</b> — sending the email that confirms your account.</li>
+        <li><b>GitHub Pages</b> — hosting the EcoLens website.</li>
+      </ul>
+      <p>We don't sell your data, show ads, or use it for tracking across other apps or websites.</p>
+
+      <h2>Deleting your data</h2>
+      <p>
+        You can permanently delete your account and all of your scan history at any time inside the
+        app: <b>History → Delete my account</b>. Deletion is immediate and can't be undone.
+      </p>
+
+      <h2>Children</h2>
+      <p>EcoLens is not directed at children under 13 and we don't knowingly collect their data.</p>
+
+      <h2>Changes and contact</h2>
+      <p>
+        If this policy changes we'll update the date above. Questions or requests:
+        see <a href="support.html">EcoLens support</a>.
+      </p>
+
+      <hr />
+
+      <h1>Məxfilik siyasəti</h1>
+      <p class="muted">Qüvvəyə minmə tarixi: 13 oktyabr 2026</p>
+      <p>
+        EcoLens yalnız lazım olan minimum məlumatı istifadə edir: e-poçt ünvanın və tarama tarixçən
+        (əşyanın adı, kateqoriyası, təkrar emal olunub-olunmaması və vaxtı). Çəkdiyin şəkil yalnız
+        əşyanı tanımaq üçün süni intellektə göndərilir və saxlanılmır. Xəritə üçün məkanın yalnız
+        yaxınlıqdakı məntəqələri göstərmək üçün istifadə olunur və hesabında saxlanılmır. Nəticənin
+        altında “Bu düzgündür?” sualına cavab versən, cavabın (və yazdığın düzəliş) dəqiqliyi ölçmək
+        üçün saxlanılır; ictimaiyyətə yalnız anonim ümumi rəqəmlər göstərilir.
+      </p>
+      <p>
+        İstifadə etdiyimiz xidmətlər: Supabase (hesab və tarixçə), Google Gemini (şəkli tanımaq),
+        Google Maps və OpenStreetMap (xəritə), Brevo (təsdiq e-poçtu), GitHub Pages (sayt). Məlumatını
+        satmırıq və reklam göstərmirik.
+      </p>
+      <p>
+        Hesabını və bütün tarixçəni istənilən vaxt tətbiqdə silə bilərsən:
+        <b>Tarixçə → Hesabımı sil</b>. Suallar üçün:
+        <a href="support.html">EcoLens dəstək</a>.
+      </p>
+    </main>
+  </body>
+</html>

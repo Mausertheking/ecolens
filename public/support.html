@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>EcoLens Support</title>
+    <style>
+      :root {
+        --ink: #12261d;
+        --muted: #5d6f66;
+        --green: #17915f;
+        --line: #e4ece7;
+      }
+      body {
+        margin: 0;
+        background: #f6f9f7;
+        color: var(--ink);
+        font-family: -apple-system, system-ui, "Inter", sans-serif;
+        line-height: 1.6;
+      }
+      /* Dark bar under the status bar, matching the app (status bar text is white). */
+      .bar {
+        background: #0f3d2e;
+        padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
+      }
+      .bar a {
+        display: block;
+        max-width: 680px;
+        margin: 0 auto;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      main {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 24px 20px 48px;
+      }
+      h1 {
+        font-size: 26px;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 28px 0 6px;
+      }
+      p,
+      li {
+        font-size: 15px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      a {
+        color: var(--green);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 32px 0;
+      }
+          .faq dt {
+        font-weight: 600;
+        margin-top: 16px;
+      }
+      .faq dd {
+        margin: 4px 0 0;
+      }
+      .contact {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        background: var(--green);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .in-app .bar { display: none; }
+    </style>
+    <script>
+      // Opened from the iOS app (in its browser sheet): hide links back to the website.
+      if (new URLSearchParams(location.search).has("app")) document.documentElement.classList.add("in-app");
+    </script>
+  </head>
+  <body>
+    <header class="bar"><a href="index.html">← EcoLens</a></header>
+    <main>
+      <h1>EcoLens Support</h1>
+      <p class="muted">Help with the EcoLens app (iPhone and web)</p>
+
+      <h2>Contact</h2>
+      <p>
+        Found a problem, a wrong answer, or have an idea? Open a request and we'll reply there.
+        Please don't include passwords or other private details.
+      </p>
+      <a class="contact" href="https://github.com/Mausertheking/ecolens/issues/new" target="_blank" rel="noopener">
+        Contact support
+      </a>
+
+      <h2>Common questions</h2>
+      <dl class="faq">
+        <dt>How many scans can I do?</dt>
+        <dd>Every account gets 3 free scans per day. The count resets at midnight UTC.</dd>
+        <dt>The answer was wrong. What should I do?</dt>
+        <dd>Tap 👎 under the result and type what the item really is. That's how we measure and
+          improve accuracy. A closer, well-lit photo of one item usually helps.</dd>
+        <dt>The map shows no recycling points.</dt>
+        <dd>Points come from OpenStreetMap, which is still incomplete outside Baku, and its servers
+          are sometimes busy. Try again in a few minutes. Location permission is needed.</dd>
+        <dt>I didn't get the confirmation email.</dt>
+        <dd>Check your spam folder, then try signing up again with the same email.</dd>
+        <dt>How do I delete my account?</dt>
+        <dd>In the app: <b>History → Delete my account</b>. Your account and scan history are
+          deleted immediately and permanently.</dd>
+      </dl>
+
+      <p style="margin-top: 28px">
+        EcoLens is created by Maksud Yusuf, a student in Baku, Azerbaijan, and published under his
+        legal guardian's developer account. · <a href="privacy.html">Privacy policy</a>
+      </p>
+
+      <hr />
+
+      <h1>EcoLens dəstək</h1>
+      <p>
+        Problem, səhv cavab və ya təklif? <a href="https://github.com/Mausertheking/ecolens/issues/new"
+        target="_blank" rel="noopener">Sorğu aç</a>, cavabı orada verəcəyik. Şifrə və ya şəxsi
+        məlumat yazma.
+      </p>
+      <dl class="faq">
+        <dt>Neçə tarama edə bilərəm?</dt>
+        <dd>Hər hesaba gündə 3 pulsuz tarama. Say UTC ilə gecə yarısı sıfırlanır.</dd>
+        <dt>Cavab səhv idi.</dt>
+        <dd>Nəticənin altında 👎 düyməsinə toxun və əşyanın əslində nə olduğunu yaz.</dd>
+        <dt>Hesabımı necə silim?</dt>
+        <dd>Tətbiqdə: <b>Tarixçə → Hesabımı sil</b>.</dd>
+      </dl>
+    </main>
+  </body>
+</html>

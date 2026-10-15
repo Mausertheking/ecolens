@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f3d2e" />
+    <title>EcoLens — Smart Waste Sorting</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EcoLens" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="leaf" aria-hidden="true">🌿</span>
+          <div>
+            <h1>EcoLens</h1>
+            <p class="tagline" data-i18n="tagline">Snap it. Sort it. Save Azerbaijan greener.</p>
+          </div>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button data-lang="en" class="active">EN</button>
+          <button data-lang="az">AZ</button>
+        </div>
+      </header>
+
+      <div id="userbar" class="userbar hidden">
+        <span id="userEmail" class="user-email"></span>
+        <div class="userbar-actions">
+          <button id="mapBtn" class="link-btn" data-i18n="nav_map">Bins</button>
+          <button id="historyBtn" class="link-btn" data-i18n="nav_history">History</button>
+          <button id="logoutBtn" class="link-btn" data-i18n="nav_logout">Log out</button>
+        </div>
+      </div>
+
+      <main>
+        <!-- Boot / loading -->
+        <section id="bootCard" class="card boot">
+          <div class="spinner"></div>
+          <p class="muted" data-i18n="loading">Loading…</p>
+        </section>
+
+        <!-- Auth (sign in / sign up) -->
+        <section id="authCard" class="card auth hidden">
+          <div class="capture-illustration" aria-hidden="true">🌿</div>
+          <h2 id="authTitle" data-i18n="auth_signin_title">Welcome back</h2>
+          <p class="muted" id="authSub" data-i18n="auth_signin_sub">Sign in to identify and sort your waste.</p>
+          <form id="authForm" class="auth-form">
+            <input id="authEmail" class="field" type="email" autocomplete="email" placeholder="you@example.com" required />
+            <input id="authPassword" class="field" type="password" autocomplete="current-password" placeholder="••••••••" required />
+            <p id="authError" class="auth-error hidden"></p>
+            <button id="authSubmit" type="submit" class="btn primary" data-i18n="auth_signin_btn">Sign in</button>
+          </form>
+          <button id="authToggle" class="link-btn center" data-i18n="auth_to_signup">Need an account? Sign up</button>
+        </section>
+
+        <!-- Capture / start screen -->
+        <section id="startCard" class="card capture hidden">
+          <div class="capture-illustration" aria-hidden="true">📷♻️</div>
+          <h2 data-i18n="capture_title">What are you throwing away?</h2>
+          <p class="muted" data-i18n="capture_sub">
+            Take or upload a photo of any item — EcoLens tells you how to recycle or dispose of it properly here in Azerbaijan.
+          </p>
+          <div class="capture-actions">
+            <button id="cameraBtn" class="btn primary" data-i18n="btn_camera">Take a photo</button>
+            <button id="uploadBtn" class="btn ghost" data-i18n="btn_upload">Upload image</button>
+          </div>
+          <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
+          <input id="fileInput" type="file" accept="image/*" hidden />
+          <p id="quota" class="quota"></p>
+        </section>
+
+        <!-- Preview + analyzing -->
+        <section id="previewCard" class="card preview hidden">
+          <div class="preview-image-wrap">
+            <img id="previewImg" alt="Selected item" />
+            <div id="scanOverlay" class="scan-overlay hidden">
+              <div class="scan-line"></div>
+              <span class="scan-text" data-i18n="analyzing">Analyzing…</span>
+            </div>
+          </div>
+          <div class="preview-actions">
+            <button id="analyzeBtn" class="btn primary" data-i18n="btn_analyze">Identify it</button>
+            <button id="retakeBtn" class="btn ghost" data-i18n="btn_retake">Retake</button>
+          </div>
+        </section>
+
+        <!-- Result -->
+        <section id="resultCard" class="card result hidden"></section>
+
+        <!-- Error -->
+        <section id="errorCard" class="card error hidden">
+          <p id="errorText"></p>
+          <button id="errorRetry" class="btn ghost" data-i18n="btn_again">Try again</button>
+        </section>
+
+        <!-- History -->
+        <section id="historyCard" class="card history hidden">
+          <div class="history-head">
+            <h2 data-i18n="history_title">Your scans</h2>
+            <button id="historyBack" class="link-btn" data-i18n="btn_back">Back</button>
+          </div>
+          <p id="myImpact" class="my-impact hidden"></p>
+          <div id="historyList" class="history-list"></div>
+          <div class="account-zone">
+            <button id="deleteAccountBtn" class="link-btn danger" data-i18n="delete_account">
+              Delete my account
+            </button>
+          </div>
+        </section>
+
+        <!-- Nearby bins map -->
+        <section id="mapCard" class="card map hidden">
+          <div class="history-head">
+            <h2 data-i18n="map_title">Recycling near you</h2>
+            <button id="mapBack" class="link-btn" data-i18n="btn_back">Back</button>
+          </div>
+          <p id="mapStatus" class="muted map-status"></p>
+          <iframe id="mapFrame" class="map-canvas" title="Recycling map"></iframe>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span data-i18n="footer">Powered by Gemini</span> ·
+        <a href="impact.html" id="impactLink" data-i18n="impact">Impact</a> ·
+        <a href="support.html" data-i18n="help">Help</a> ·
+        <a href="privacy.html" data-i18n="privacy">Privacy policy</a>
+        <div class="credit" data-i18n="credit">Created by Maksud Yusuf · Baku, Azerbaijan</div>
+      </footer>
+    </div>
+
+    <!-- Bundled (not loaded from a CDN) so the iOS app ships all of its own code. -->
+    <script src="vendor/supabase-2.110.0.js"></script>
+    <script>
+      // Safety net: never leave the iOS launch screen up if the app fails to start.
+      setTimeout(() => window.Capacitor?.Plugins?.SplashScreen?.hide(), 6000);
+    </script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+      // The native app ships its own files, so the web service worker is web-only.
+      if ("serviceWorker" in navigator && !window.Capacitor?.isNativePlatform?.()) {
+        // Auto-reload once when a new version takes over — but not on a first
+        // visit, where the first worker taking control isn't an update.
+        const hadController = !!navigator.serviceWorker.controller;
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!hadController || refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+        window.addEventListener("load", async () => {
+          try {
+            const reg = await navigator.serviceWorker.register("sw.js");
+            reg.update();
+            // Re-check for a new version each time the app is reopened/refocused.
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === "visible") reg.update();
+            });
+          } catch (e) {}
+        });
+      }
+    </script>
+  </body>
+</html>
