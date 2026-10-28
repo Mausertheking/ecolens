@@ -664,6 +664,26 @@ h2 {
   font-size: 12.5px;
 }
 
+/* Account screen */
+.account-email {
+  margin: 0 0 16px;
+  font-size: 14px;
+}
+.account-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn.danger {
+  background: var(--red-soft);
+  color: var(--red);
+}
+.account-hint {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  text-align: center;
+}
+
 /* Account (delete) */
 .account-zone {
   margin-top: 18px;

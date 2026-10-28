@@ -6,6 +6,9 @@ const I18N = {
     nav_map: "Bins",
     nav_history: "History",
     nav_logout: "Log out",
+    nav_account: "Account",
+    account_title: "Account",
+    delete_hint: "Permanently deletes your account and all your scan history.",
     map_title: "Recycling near you",
     map_locating: "Finding your location…",
     map_searching: "Loading recycling points near you…",
@@ -94,6 +97,9 @@ const I18N = {
     nav_map: "Qutular",
     nav_history: "Tarixçə",
     nav_logout: "Çıxış",
+    nav_account: "Hesab",
+    account_title: "Hesab",
+    delete_hint: "Hesabını və bütün tarama tarixçəni həmişəlik silir.",
     map_title: "Yaxınlıqda təkrar emal",
     map_locating: "Məkanın tapılır…",
     map_searching: "Yaxınlıqdakı təkrar emal məntəqələri yüklənir…",
@@ -190,7 +196,7 @@ const CATEGORY_META = {
   "general-waste": { emoji: "🗑️", color: "#8a9a91", en: "General waste", az: "Ümumi tullantı" },
 };
 
-const SCREENS = ["bootCard", "authCard", "startCard", "previewCard", "resultCard", "errorCard", "historyCard", "mapCard"];
+const SCREENS = ["bootCard", "authCard", "startCard", "previewCard", "resultCard", "errorCard", "historyCard", "mapCard", "accountCard"];
 
 let lang = new URLSearchParams(location.search).get("lang") === "az" ? "az" : "en";
 let currentImage = null;
@@ -331,6 +337,12 @@ $("authForm").addEventListener("submit", async (e) => {
     $("authSubmit").disabled = false;
   }
 });
+
+$("accountBtn").addEventListener("click", () => {
+  $("accountEmail").textContent = session?.user?.email || "";
+  show("accountCard");
+});
+$("accountBack").addEventListener("click", () => show("startCard"));
 
 $("logoutBtn").addEventListener("click", async () => {
   await sb.auth.signOut();
