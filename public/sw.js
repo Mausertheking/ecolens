@@ -1,6 +1,6 @@
 // EcoLens service worker — caches the app shell for offline loading and
 // enables install. The AI call (Supabase Edge Function) always goes to the network.
-const CACHE = "ecolens-v28";
+const CACHE = "ecolens-v29";
 // Relative to the worker's own location, so this works both at a domain root
 // and under GitHub Pages' /ecolens/ path.
 const SHELL = [
