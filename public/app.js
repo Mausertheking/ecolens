@@ -896,3 +896,4 @@ function hexRgb(hex) {
 
 applyLang();
 boot();
+window.ecolensVisit?.("app");

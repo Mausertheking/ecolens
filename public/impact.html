@@ -202,6 +202,10 @@
         </div>
 
         <div id="content" class="hidden" style="display: flex; flex-direction: column; gap: 16px">
+          <div class="stat visitors hidden" id="visitorsTile">
+            <div class="stat-num" id="sVisitors">–</div>
+            <div class="stat-label" id="sVisitorsLabel"></div>
+          </div>
           <div class="stat-grid">
             <div class="stat"><div class="stat-num" id="sScans">–</div><div class="stat-label" data-i18n="s_scans">items sorted</div></div>
             <div class="stat"><div class="stat-num" id="sUsers">–</div><div class="stat-label" data-i18n="s_users">people using it</div></div>
@@ -226,6 +230,12 @@
           <section class="card">
             <h2 data-i18n="month_title">Scans per month</h2>
             <div class="months" id="months"></div>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="web_title">Website visits per month</h2>
+            <p class="section-sub" data-i18n="web_sub">Source: Google Maps Platform usage (map loads on the EcoLens website).</p>
+            <div class="months" id="webMonths"></div>
           </section>
 
           <section class="card">
@@ -260,6 +270,9 @@
           failed: "Couldn't load the numbers. Please try again later.",
           s_scans: "items sorted",
           s_users: "people using it",
+          web_title: "Website visits per month",
+          web_sub: "Source: Google Maps Platform usage (map loads on the EcoLens website).",
+          v_month: "people visited the EcoLens website this month · {total} in total since {date}",
           s_recycle: "sent to recycling ({n} items)",
           s_haz: "hazardous & e-waste items kept out of the normal bin",
           acc_title: "Is the AI right?",
@@ -292,6 +305,9 @@
           failed: "Rəqəmlər yüklənmədi. Zəhmət olmasa sonra yenidən cəhd et.",
           s_scans: "əşya ayrılıb",
           s_users: "istifadəçi",
+          web_title: "Aylıq sayt ziyarətləri",
+          web_sub: "Mənbə: Google Maps Platform istifadəsi (EcoLens saytında xəritə yüklənmələri).",
+          v_month: "nəfər bu ay EcoLens saytına daxil olub · {date} tarixindən cəmi {total}",
           s_recycle: "təkrar emala göndərilib ({n} əşya)",
           s_haz: "təhlükəli və elektron tullantı adi qutudan uzaq tutulub",
           acc_title: "Süni intellekt düz deyirmi?",
@@ -385,6 +401,15 @@
         $("sRecycle").textContent = pct(s.recyclable, s.scans) + "%";
         $("sRecycleLabel").textContent = t("s_recycle", { n: n.format(s.recyclable) });
         $("sHaz").textContent = n.format(s.hazardous);
+        // Website visitors (anonymous counter, see privacy policy).
+        if (s.visitors && s.visitors.total > 0) {
+          $("visitorsTile").classList.remove("hidden");
+          $("sVisitors").textContent = n.format(s.visitors.month);
+          $("sVisitorsLabel").textContent = t("v_month", {
+            total: n.format(s.visitors.total),
+            date: fullDate(new Date(s.visitors.since)),
+          });
+        }
 
         // Accuracy from user feedback, plus calibration by confidence band.
         const rated = s.feedback.correct + s.feedback.wrong;
@@ -418,8 +443,26 @@
           .join("");
 
         // Monthly activity (CSS bars).
-        const max = Math.max(1, ...s.monthly.map((m) => m.n));
-        $("months").innerHTML = s.monthly
+        $("months").innerHTML = monthBars(s.monthly);
+        $("webMonths").innerHTML = monthBars(WEB_VISITS);
+
+        $("howModel").textContent = t("how_1", { model: modelName(s.model) });
+        $("since").textContent = s.since
+          ? t("since", { date: fullDate(new Date(s.since)) })
+          : "";
+      }
+
+      // Monthly website visits as reported by Google Maps Platform (Cloud Console).
+      const WEB_VISITS = [
+        { month: "2026-07", n: 20 },
+        { month: "2026-08", n: 94 },
+        { month: "2026-09", n: 176 },
+        { month: "2026-10", n: 345 },
+      ];
+
+      function monthBars(list) {
+        const max = Math.max(1, ...list.map((m) => m.n));
+        return list
           .map((m) => {
             const [y, mo] = m.month.split("-").map(Number);
             const label = monthShort(new Date(Date.UTC(y, mo - 1, 1)));
@@ -431,11 +474,6 @@
             </div>`;
           })
           .join("");
-
-        $("howModel").textContent = t("how_1", { model: modelName(s.model) });
-        $("since").textContent = s.since
-          ? t("since", { date: fullDate(new Date(s.since)) })
-          : "";
       }
 
       // "gemini-3.6-flash" → "Gemini 3.6 Flash"
@@ -462,6 +500,7 @@
 
       applyLang();
       load();
+      window.ecolensVisit?.("impact");
     </script>
   </body>
 </html>

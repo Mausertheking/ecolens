@@ -10,3 +10,22 @@ window.ECOLENS = {
   // from here so the Maps key's website restriction still applies.
   siteUrl: "https://mausertheking.github.io/ecolens/",
 };
+
+// Anonymous visit counting for the website: a random ID kept in this browser
+// (no personal data), one count per visitor, page and day. Not used in the app.
+window.ecolensVisit = function (page) {
+  try {
+    if (window.Capacitor?.isNativePlatform?.()) return;
+    let vid = localStorage.getItem("ecolens-vid");
+    if (!vid) {
+      vid = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now()) + Math.random().toString(36).slice(2, 12);
+      localStorage.setItem("ecolens-vid", vid);
+    }
+    fetch(window.ECOLENS.apiBase + "/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vid, page }),
+      keepalive: true,
+    }).catch(function () {});
+  } catch (e) {}
+};
