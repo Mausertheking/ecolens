@@ -80,7 +80,6 @@ const I18N = {
     err_generic: "Something went wrong. Please try again.",
     footer: "Powered by Gemini",
     credit: "Created by Maksud Yusuf · Baku, Azerbaijan",
-    impact: "Impact",
     help: "Help",
     fb_question: "Was this right?",
     fb_yes: "👍 Yes",
@@ -171,7 +170,6 @@ const I18N = {
     err_generic: "Xəta baş verdi. Zəhmət olmasa yenidən cəhd et.",
     footer: "Gemini ilə işləyir",
     credit: "Müəllif: Maksud Yusuf · Bakı, Azərbaycan",
-    impact: "Təsir",
     help: "Kömək",
     fb_question: "Bu düzgündür?",
     fb_yes: "👍 Bəli",
@@ -242,7 +240,6 @@ function applyLang() {
   document.querySelectorAll(".lang-toggle button").forEach((b) =>
     b.classList.toggle("active", b.dataset.lang === lang)
   );
-  $("impactLink").href = `impact.html?lang=${lang}`;
   updateAuthLabels();
   updateQuota();
   if (lastResult && !$("resultCard").classList.contains("hidden")) renderResult(lastResult);
@@ -700,7 +697,7 @@ async function getLocation() {
   );
 }
 
-// ---------- Footer pages (Impact, Help, Privacy) ----------
+// ---------- Footer pages (Help, Privacy) ----------
 // In the iOS app these open in the system's in-app browser sheet (with its own
 // Done button) instead of replacing the app screen.
 document.querySelector(".footer").addEventListener("click", (e) => {
@@ -798,7 +795,7 @@ function renderResult(d) {
 }
 
 // ---------- "Was this right?" feedback ----------
-// Users' verdicts give EcoLens a measured, real-world accuracy (Impact page).
+// Users' verdicts give EcoLens a measured, real-world accuracy.
 // State lives on the result object so a language switch re-renders it as-is.
 function feedbackHtml(d) {
   if (d.fbState === "sent") return `<p class="fb-thanks">${t("fb_thanks")}</p>`;
